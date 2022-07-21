@@ -4,139 +4,142 @@
 
 namespace taco {
 
-struct AnnihilatorPtr::Content {
-  Literal annihilator;
-  std::vector<int> positions;
-};
+  struct AnnihilatorPtr::Content {
+    Literal          annihilator;
+    std::vector<int> positions;
+  };
 
-struct IdentityPtr::Content {
-  Literal identity;
-  std::vector<int> positions;
-};
+  struct IdentityPtr::Content {
+    Literal          identity;
+    std::vector<int> positions;
+  };
 
-// Property pointer definitions
-PropertyPtr::PropertyPtr() {
-}
-
-PropertyPtr::~PropertyPtr() {
-}
-
-std::ostream& PropertyPtr::print(std::ostream& os) const {
-  os << "Property()";
-  return os;
-}
-
-bool PropertyPtr::equals(const PropertyPtr* p) const {
-  return this == p;
-}
-
-// Annihilator pointer definitions
-AnnihilatorPtr::AnnihilatorPtr() : PropertyPtr(), content(nullptr) {
-}
-
-AnnihilatorPtr::AnnihilatorPtr(Literal annihilator) : PropertyPtr(), content(new Content) {
-  content->annihilator = annihilator;
-  content->positions = std::vector<int>();
-}
-
-AnnihilatorPtr::AnnihilatorPtr(Literal annihilator, std::vector<int>& pos) : PropertyPtr(), content(new Content) {
-  content->annihilator = annihilator;
-  content->positions = pos;
-}
-
-const Literal& AnnihilatorPtr::annihilator() const {
-  return content->annihilator;
-}
-
-const std::vector<int> & AnnihilatorPtr::positions() const {
-  return content->positions;
-}
-
-std::ostream& AnnihilatorPtr::print(std::ostream& os) const {
-  os << "Annihilator(";
-  if (annihilator().defined()) {
-    os << annihilator();
-  } else {
-    os << "undef";
+  // Property pointer definitions
+  PropertyPtr::PropertyPtr() {
   }
-  os << ")";
-  return os;
-}
 
-bool AnnihilatorPtr::equals(const PropertyPtr* p) const {
-  if(!isa<AnnihilatorPtr>(p)) return false;
-  const AnnihilatorPtr* a = to<AnnihilatorPtr>(p);
-  return ::taco::equals(annihilator(), a->annihilator());
-}
-
-// Identity pointer definitions
-IdentityPtr::IdentityPtr() : PropertyPtr(), content(nullptr) {
-}
-
-IdentityPtr::IdentityPtr(Literal identity) : PropertyPtr(), content(new Content) {
-  content->identity = identity;
-}
-
-IdentityPtr::IdentityPtr(Literal identity, std::vector<int> &p) : PropertyPtr(), content(new Content) {
-  content->identity = identity;
-  content->positions = p;
-}
-
-const Literal& IdentityPtr::identity() const {
-  return content->identity;
-}
-
-const std::vector<int> & IdentityPtr::positions() const {
-  return content->positions;
-}
-
-std::ostream& IdentityPtr::print(std::ostream& os) const {
-  os << "Identity(";
-  if (identity().defined()) {
-    os << identity();
-  } else {
-    os << "undef";
+  PropertyPtr::~PropertyPtr() {
   }
-  os << ")";
-  return os;
-}
 
-bool IdentityPtr::equals(const PropertyPtr* p) const {
-  if(!isa<IdentityPtr>(p)) return false;
-  const IdentityPtr* idnty = to<IdentityPtr>(p);
-  return ::taco::equals(identity(), idnty->identity());
-}
+  std::ostream &PropertyPtr::print(std::ostream &os) const {
+    os << "Property()";
+    return os;
+  }
 
-// Associative pointer definitions
-AssociativePtr::AssociativePtr() : PropertyPtr() {
-}
+  bool PropertyPtr::equals(const PropertyPtr *p) const {
+    return this == p;
+  }
 
-std::ostream& AssociativePtr::print(std::ostream& os) const {
-  os << "Associative()";
-  return os;
-}
+  // Annihilator pointer definitions
+  AnnihilatorPtr::AnnihilatorPtr(): PropertyPtr(), content(nullptr) {
+  }
 
-bool AssociativePtr::equals(const PropertyPtr* p) const {
-  return isa<AssociativePtr>(p);
-}
+  AnnihilatorPtr::AnnihilatorPtr(Literal annihilator): PropertyPtr(), content(new Content) {
+    content->annihilator = annihilator;
+    content->positions   = std::vector<int>();
+  }
 
-// CommutativePtr definitions
-CommutativePtr::CommutativePtr() : PropertyPtr() {
-}
+  AnnihilatorPtr::AnnihilatorPtr(Literal annihilator, std::vector<int> &pos): PropertyPtr(), content(new Content) {
+    content->annihilator = annihilator;
+    content->positions   = pos;
+  }
 
-CommutativePtr::CommutativePtr(const std::vector<int>& ordering) : ordering_(ordering) {
-}
+  const Literal &AnnihilatorPtr::annihilator() const {
+    return content->annihilator;
+  }
 
-std::ostream& CommutativePtr::print(std::ostream& os) const {
-  os << "Commutative(";
-  os << "{" << util::join(ordering_) << "})";
-  return os;
-}
+  const std::vector<int> &AnnihilatorPtr::positions() const {
+    return content->positions;
+  }
 
-bool CommutativePtr::equals(const PropertyPtr* p) const {
-  if(!isa<CommutativePtr>(p)) return false;
-  const CommutativePtr* idnty = to<CommutativePtr>(p);
-  return ordering_ == idnty->ordering_;
-}
+  std::ostream &AnnihilatorPtr::print(std::ostream &os) const {
+    os << "Annihilator(";
+      if (annihilator().defined()) {
+        os << annihilator();
+      } else {
+        os << "undef";
+      }
+    os << ")";
+    return os;
+  }
 
-}
+  bool AnnihilatorPtr::equals(const PropertyPtr *p) const {
+    if (!isa<AnnihilatorPtr>(p))
+      return false;
+    const AnnihilatorPtr *a = to<AnnihilatorPtr>(p);
+    return ::taco::equals(annihilator(), a->annihilator());
+  }
+
+  // Identity pointer definitions
+  IdentityPtr::IdentityPtr(): PropertyPtr(), content(nullptr) {
+  }
+
+  IdentityPtr::IdentityPtr(Literal identity): PropertyPtr(), content(new Content) {
+    content->identity = identity;
+  }
+
+  IdentityPtr::IdentityPtr(Literal identity, std::vector<int> &p): PropertyPtr(), content(new Content) {
+    content->identity  = identity;
+    content->positions = p;
+  }
+
+  const Literal &IdentityPtr::identity() const {
+    return content->identity;
+  }
+
+  const std::vector<int> &IdentityPtr::positions() const {
+    return content->positions;
+  }
+
+  std::ostream &IdentityPtr::print(std::ostream &os) const {
+    os << "Identity(";
+      if (identity().defined()) {
+        os << identity();
+      } else {
+        os << "undef";
+      }
+    os << ")";
+    return os;
+  }
+
+  bool IdentityPtr::equals(const PropertyPtr *p) const {
+    if (!isa<IdentityPtr>(p))
+      return false;
+    const IdentityPtr *idnty = to<IdentityPtr>(p);
+    return ::taco::equals(identity(), idnty->identity());
+  }
+
+  // Associative pointer definitions
+  AssociativePtr::AssociativePtr(): PropertyPtr() {
+  }
+
+  std::ostream &AssociativePtr::print(std::ostream &os) const {
+    os << "Associative()";
+    return os;
+  }
+
+  bool AssociativePtr::equals(const PropertyPtr *p) const {
+    return isa<AssociativePtr>(p);
+  }
+
+  // CommutativePtr definitions
+  CommutativePtr::CommutativePtr(): PropertyPtr() {
+  }
+
+  CommutativePtr::CommutativePtr(const std::vector<int> &ordering): ordering_(ordering) {
+  }
+
+  std::ostream &CommutativePtr::print(std::ostream &os) const {
+    os << "Commutative(";
+    os << "{" << util::join(ordering_) << "})";
+    return os;
+  }
+
+  bool CommutativePtr::equals(const PropertyPtr *p) const {
+    if (!isa<CommutativePtr>(p))
+      return false;
+    const CommutativePtr *idnty = to<CommutativePtr>(p);
+    return ordering_ == idnty->ordering_;
+  }
+
+} // namespace taco

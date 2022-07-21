@@ -4,114 +4,102 @@
 #include <type_traits>
 #include <vector>
 
-namespace taco {
-namespace util {
+namespace taco { namespace util {
 
-// Compare types
-template<class T, class...>
-struct areSame : std::true_type {};
+  // Compare types
+  template <class T, class...>
+  struct areSame: std::true_type {};
 
-template<class T1, class T2, class... TN>
-struct areSame<T1, T2, TN...>
-  : std::integral_constant<bool, std::is_same<T1,T2>{} && areSame<T1, TN...>{}>
-{};
+  template <class T1, class T2, class... TN>
+  struct areSame<T1, T2, TN...>: std::integral_constant<bool, std::is_same<T1, T2> {} && areSame<T1, TN...> {}> {};
 
+  // Product
+  namespace {
 
-// Product
-namespace {
+    template <int...>
+    struct productHelper;
 
-template <int...>
-struct productHelper;
+    template <int prod, int val, int... rest>
+    struct productHelper<prod, val, rest...> {
+      static const int value = productHelper<prod * val, rest...>::value;
+    };
 
-template <int prod, int val, int... rest>
-struct productHelper<prod, val, rest...> {
-  static const int value = productHelper<prod * val, rest...>::value;
-};
+    template <int val>
+    struct productHelper<val> {
+      static const int value = val;
+    };
 
+  } // unnamed namespace
 
-template <int val>
-struct productHelper<val> {
-  static const int value = val;
-};
+  template <int... vals>
+  struct product;
 
-} // unnamed namespace
+  template <>
+  struct product<> {
+    static constexpr int value = 1;
+  };
 
-template <int... vals> struct product;
+  template <int val, int... rest>
+  struct product<val, rest...> {
+    static const int value = productHelper<1, val, rest...>::value;
+  };
 
-template <>
-struct product <> {
-  static constexpr int value = 1;
-};
+  template <int... vals>
+  struct product {
+    static const int value = product<vals...>::value;
+  };
 
-template <int val, int... rest>
-struct product <val, rest...> {
-  static const int value = productHelper<1, val, rest...>::value;
-};
+  // Machinery to compute array offsets
+  template <int...>
+  struct seq {};
 
-template <int... vals>
-struct product {
-  static const int value = product<vals...>::value;
-};
+  /// Remove first value from int variadic template
+  template <int first, int... rest>
+  struct removeFirst {
+    typedef seq<rest...> type;
+  };
 
+  /// Compute product of static sequence
+  template <int... values>
+  inline constexpr int computeProduct(seq<values...> seq) {
+    return product<values...>::value;
+  }
 
-// Machinery to compute array offsets
-template <int...> struct seq {};
+  /// Compute the offset into an n-dimensional array
+  template <int... dimensions, typename... Indices>
+  inline int computeOffset(seq<dimensions...> dims, int index, Indices... rest) {
+    typename removeFirst<dimensions...>::type innerDims;
+    return index * computeProduct(innerDims) + computeOffset(innerDims, rest...);
+  }
 
-/// Remove first value from int variadic template
-template <int first, int... rest>
-struct removeFirst {
-  typedef seq<rest...> type;
-};
+  template <int... dimensions>
+  inline constexpr int computeOffset(const seq<dimensions...> &dims, int i) {
+    return i;
+  }
 
+  /// Compute the offset into an n-dimensional array
+  template <int... dimensions>
+  inline int computeOffset(seq<dimensions...> dims, const std::vector<size_t> &indices) {
+    return computeOffset(dims, indices.begin(), indices.end());
+  }
 
-/// Compute product of static sequence
-template <int... values> inline constexpr
-int computeProduct(seq<values...> seq) {
-  return product<values...>::value;
-}
+  template <int... dimensions>
+  inline int computeOffset(seq<dimensions...> dims, const std::vector<size_t>::const_iterator &begin, const std::vector<size_t>::const_iterator &end) {
+    typename removeFirst<dimensions...>::type innerDims;
+    const size_t                              i      = *begin;
+    constexpr size_t                          stride = computeProduct(innerDims);
+    constexpr size_t                          rest   = computeOffset(innerDims, begin + 1, end);
+    return i * stride + rest;
+  }
 
+  template <int... dimensions>
+  inline int computeOffset(const seq<> &dims, const std::vector<size_t>::const_iterator &begin, const std::vector<size_t>::const_iterator &end) {
+    return 0;
+  }
 
-/// Compute the offset into an n-dimensional array
-template <int... dimensions, typename... Indices> inline
-int computeOffset(seq<dimensions...> dims, int index, Indices... rest) {
-  typename removeFirst<dimensions...>::type innerDims;
-  return index * computeProduct(innerDims) + computeOffset(innerDims, rest...);
-}
+  inline constexpr int computeOffset(seq<> dims, const std::vector<size_t> &indices) {
+    return 0;
+  }
 
-template <int... dimensions> inline constexpr
-int computeOffset(const seq<dimensions...> &dims, int i) {
-  return i;
-}
-
-
-/// Compute the offset into an n-dimensional array
-template <int... dimensions> inline
-int computeOffset(seq<dimensions...> dims, const std::vector<size_t>& indices) {
-  return computeOffset(dims, indices.begin(), indices.end());
-}
-
-template <int... dimensions> inline
-int computeOffset(seq<dimensions...> dims,
-                  const std::vector<size_t>::const_iterator& begin,
-                  const std::vector<size_t>::const_iterator& end) {
-  typename removeFirst<dimensions...>::type innerDims;
-  const 	size_t i      = *begin;
-  constexpr size_t stride = computeProduct(innerDims);
-  constexpr size_t rest   = computeOffset(innerDims, begin+1, end);
-  return i * stride + rest;
-}
-
-template <int... dimensions> inline
-int computeOffset(const seq<> &dims,
-                  const std::vector<size_t>::const_iterator& begin,
-                  const std::vector<size_t>::const_iterator& end) {
-  return 0;
-}
-
-inline constexpr
-int computeOffset(seq<> dims, const std::vector<size_t>& indices) {
-  return 0;
-}
-
-}}
+}} // namespace taco::util
 #endif

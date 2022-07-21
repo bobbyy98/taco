@@ -3,19 +3,18 @@
 
 #include <ostream>
 
-namespace taco {
-namespace util {
+namespace taco { namespace util {
 
-class Printable {
-public:
-  virtual void print(std::ostream &os) const = 0;
-  virtual ~Printable() {};
-};
+  class Printable {
+  public:
+    virtual void print(std::ostream &os) const = 0;
+    virtual ~Printable() {};
+  };
 
-inline std::ostream &operator<<(std::ostream &os, const Printable &printable) {
-  printable.print(os);
-  return os;
-}
+  inline std::ostream &operator<<(std::ostream &os, const Printable &printable) {
+    printable.print(os);
+    return os;
+  }
 
-}}
+}} // namespace taco::util
 #endif
