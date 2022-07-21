@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.4.0 FATAL_ERROR)
+set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE INTERNAL "" FORCE)
 if(POLICY CMP0048)
   cmake_policy(SET CMP0048 NEW)
 endif()
