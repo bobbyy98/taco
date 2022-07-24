@@ -12,19 +12,22 @@ Standard: Latest
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
-#Clang11: AlignConsecutiveBitFields: true
+
+##Clang11: AlignConsecutiveBitFields: true
 AlignConsecutiveDeclarations: true
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: Left
 AlignOperands: true
-#Clang11: AlignAfterOperator
+
+##Clang11: AlignAfterOperator
 AlignTrailingComments: true
 AllowAllArgumentsOnNextLine: true
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
-#Clang11: AllowShortEnumsOnASingleLine: false
+#
+##Clang11: AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: None
@@ -36,40 +39,41 @@ BinPackArguments: true
 BinPackParameters: false
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel:        false
-  AfterClass:            false
+  AfterCaseLabel: false
+  AfterClass: false
   AfterControlStatement: Never
-  AfterEnum:             false
-  AfterExternBlock:      false
-  AfterFunction:         false
-  AfterNamespace:        false
-  AfterStruct:           false
-  AfterUnion:            false
-  BeforeCatch:           false
-  BeforeElse:            false
-#Clang11: BeforeWhile:           false
-#Clang11: BeforeLambdaBody:      false
-  IndentBraces:          true
-  SplitEmptyFunction:    true
-  SplitEmptyNamespace:   true
-  SplitEmptyRecord:      true
+  AfterEnum: false
+  AfterExternBlock: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+##  Clang11: BeforeWhile:           false
+  ##Clang11: BeforeLambdaBody:      false
+#  IndentBraces: true
+  SplitEmptyFunction: true
+  SplitEmptyNamespace: true
+  SplitEmptyRecord: true
 BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: AfterColon
 BreakInheritanceList: AfterColon
 BreakStringLiterals: true
-ColumnLimit: 160
+ColumnLimit: 80
 CompactNamespaces: true
 Cpp11BracedListStyle: true
 DeriveLineEnding: false
 DerivePointerAlignment: false
 FixNamespaceComments: true
 IncludeBlocks: Merge
-#Clang11?: IndentCaseBlocks: true
+# Clang11?: IndentCaseBlocks: true
 IndentCaseLabels: true
-#Clang11: IndentExternBlock: true
+# Clang11: IndentExternBlock: true
 IndentPPDirectives: None
-IndentWidth: 4
+IndentWidth: 2
+TabWidth: 2
 IndentWrappedFunctionNames: true
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1
@@ -83,16 +87,16 @@ PointerAlignment: Right
 ReflowComments: true
 SortIncludes: true
 IncludeCategories:
-- Regex: '"*PlatformIO.h"'
-  Priority: -5
-- Regex: '"*TextIOTypes.h"'
-  Priority: -4
-- Regex: '<[Ww]indows.h>'
-  Priority: -3
-- Regex: '<*\/.h>'
-  Priority: -2
-- Regex: '"*\/.h"'
-  Priority: 1
+  - Regex: '"*PlatformIO.h"'
+    Priority: -5
+  - Regex: '"*TextIOTypes.h"'
+    Priority: -4
+  - Regex: '<[Ww]indows.h>'
+    Priority: -3
+  - Regex: '<*\/.h>'
+    Priority: -2
+  - Regex: '"*\/.h"'
+    Priority: 1
 
 SortUsingDeclarations: true
 SpaceAfterCStyleCast: true
@@ -114,7 +118,5 @@ SpacesInContainerLiterals: false
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
 SpacesInSquareBrackets: false
-TabWidth: 2
-IndentWidth: 2
 UseCRLF: false
 UseTab: Never
