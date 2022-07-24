@@ -147,36 +147,6 @@ class TensorBase {
   template <typename CType>
   void insert(const std::vector<int> &coordinate, CType value);
 
-  /// Insert values from the tensor from the given tensor (Reshape the RHS
-  /// tensor to LHS tensor).
-  template <typename CType>
-  void import(const TensorBase &tensor) {
-    // Products of dimensions should be equal
-    taco_iassert(tensor.getSize() == getSize()) << "Tensor sizes do not match";
-
-    auto src_strides = tensor.getStrides();
-    auto dst_strides = getStrides();
-
-    auto src_order = tensor.getOrder();
-    auto dst_order = getOrder();
-    //  Iterate over source tensor and copy data to destination tensor
-    for (auto &value : tensor.iterator<CType>()) {
-      auto src_coord = value.first;
-      auto src_value = value.second;
-      int src_coord_idx = 0;
-      // Iterate over src_coord and multiply into src_coord_idx
-      for (int i = 0; i < src_order; i++) {
-        src_coord_idx += src_coord[i] * src_strides[i];
-      }
-      std::vector<int> dst_coord(dst_order);
-      for (int i = 0; i < dst_order; i++) {
-        dst_coord[i] = src_coord_idx / dst_strides[i];
-        src_coord_idx %= dst_strides[i];
-      }
-      insert(dst_coord, src_value);
-    }
-  }
-
   /// Fill the tensor with the list of components defined by the iterator range
   /// (begin, end).
   ///
@@ -703,6 +673,36 @@ class Tensor : public TensorBase {
 
   /// Assign an expression to a scalar tensor.
   void operator=(const IndexExpr &expr);
+
+  /** --- Write methods --- */
+  /// Insert values from the tensor from the given tensor (Reshape the RHS
+  /// tensor to LHS tensor).
+  void import(const TensorBase &tensor) {
+    // Products of dimensions should be equal
+    taco_iassert(tensor.getSize() == getSize()) << "Tensor sizes do not match";
+
+    auto src_strides = tensor.getStrides();
+    auto dst_strides = getStrides();
+
+    auto src_order = tensor.getOrder();
+    auto dst_order = getOrder();
+    //  Iterate over source tensor and copy data to destination tensor
+    for (auto &value : tensor.iterator<CType>()) {
+      auto src_coord = value.first;
+      auto src_value = value.second;
+      int src_coord_idx = 0;
+      // Iterate over src_coord and multiply into src_coord_idx
+      for (int i = 0; i < src_order; i++) {
+        src_coord_idx += src_coord[i] * src_strides[i];
+      }
+      std::vector<int> dst_coord(dst_order);
+      for (int i = 0; i < dst_order; i++) {
+        dst_coord[i] = src_coord_idx / dst_strides[i];
+        src_coord_idx %= dst_strides[i];
+      }
+      insert(dst_coord, src_value);
+    }
+  }
 
  private:
   /// The _access method family is the template level implementation of
