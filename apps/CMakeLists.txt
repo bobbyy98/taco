@@ -1,1 +1,3 @@
 add_subdirectory(tensor_times_vector)
+add_subdirectory(playground)
+add_subdirectory(gcn)
